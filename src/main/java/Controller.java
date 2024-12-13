@@ -24,7 +24,7 @@ public class Controller {
         try {
             while (data.ready()) {
                 ArrayList<String> rawLine = new ArrayList<>(Arrays.stream(data.readLine().split("\\s+")).toList());
-                dataMap.put(rawLine.getFirst(), new ArrayList<>(rawLine.subList(1, rawLine.size() - 2)));
+                dataMap.put(rawLine.getFirst(), new ArrayList<>(rawLine.subList(1, rawLine.size())));
             }
         } catch (IOException e) {
             System.out.println("Reading failed in ReadDataFrom: " + e.getMessage());
@@ -37,13 +37,11 @@ public class Controller {
                     try {
                         if (!field.getName().equals("LL")) {
                             if (dataMap.get(field.getName()) != null) {
-                                System.out.println(dataMap.get(field.getName()));
 
-                                double[] val = new double[dataMap.get(field.getName()).size()];
+                                double[] val = new double[dataMap.get("LATA").size()-1];
 
-                                for (int i = 0; i < val.length - 1; i++) {
-                                    System.out.println((String) dataMap.get(field.getName()).get(i + 1));
-                                    val[i] = Double.parseDouble((String) dataMap.get(field.getName()).get(i + 1));
+                                for (int i = 0; i < dataMap.get(field.getName()).size(); i++) {
+                                    val[i] = Double.parseDouble((String) dataMap.get(field.getName()).get(i));
                                 }
 
                                 field.set(model, val);
@@ -61,7 +59,6 @@ public class Controller {
         Arrays.stream(model.getClass().getDeclaredMethods())
                 .filter(method -> method.getName().equals("run")).forEach(method -> {
                     try {
-                        System.out.println("invoked");
                         method.invoke(model);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         System.out.println("Error while running model: " + e.getMessage() + " " + e.getClass().getName());

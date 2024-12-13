@@ -51,7 +51,7 @@ public class Main {
 
         try {
             Controller test = new Controller("models.Model1");
-            test.readDataFrom("Z:\\S3\\UTP\\pro3\\data\\data1.txt");
+            test.readDataFrom("Z:\\S3\\UTP\\pro3\\data\\data2.txt");
             test.runModel();
         } catch (FileNotFoundException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {

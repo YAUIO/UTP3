@@ -22,7 +22,6 @@ public class Model1 {
     }
 
     public void run() {
-        System.out.println(LL);
         PKB = new double[LL];
         PKB[0] = KI[0] + KS[0] + INW[0] + EKS[0] - IMP[0];
         for (int t = 1; t < LL; t++) {
