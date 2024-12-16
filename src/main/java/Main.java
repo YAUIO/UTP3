@@ -3,6 +3,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -37,13 +38,9 @@ public class Main {
 
         /*ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine groovy = manager.getEngineByName("groovy");
-        String code = "def x = \"hello\" \n" + "return x * 5";
-        groovy.put("x",5);
-        String c = "return x * 5";
+        Scanner in = new Scanner(System.in);
         try {
-            Object result = groovy.eval(code);
-            System.out.println(result);
-            result = groovy.eval(c);
+            Object result = groovy.eval(in.nextLine());
             System.out.println(result);
         } catch (ScriptException e) {
             throw new RuntimeException(e);
@@ -51,8 +48,9 @@ public class Main {
 
         try {
             Controller test = new Controller("models.Model1");
-            test.readDataFrom("Z:\\S3\\UTP\\pro3\\data\\data2.txt");
+            test.readDataFrom("F:\\Users\\User\\Documents\\JavaProjects\\UTP3\\data\\data2.txt");
             test.runModel();
+            System.out.println(test.getResultsAsTsv());
         } catch (FileNotFoundException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
             System.out.println("Error: " + e.getMessage() + " " + e.getClass().getName());

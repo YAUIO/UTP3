@@ -65,4 +65,26 @@ public class Controller {
                     }
                 });
     }
+
+    public void runScriptFromFile(String fname) {
+
+    }
+
+    public void runScript(String script) {
+
+    }
+
+    String getResultsAsTsv(){ //TODO proper formatting
+        StringBuilder returnStr = new StringBuilder();
+        Arrays.stream(this.model.getClass().getDeclaredFields())
+                .forEach(f -> {
+                    try {
+                        f.setAccessible(true);
+                        returnStr.append(f.getName()).append(' ').append(f.get(this.model)).append('\n');
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        return returnStr.toString();
+    }
 }
