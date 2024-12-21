@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Arrays;
+
 public class Model1 {
     @Bind private int LL; // number of years
 

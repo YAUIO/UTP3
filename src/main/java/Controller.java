@@ -18,8 +18,10 @@ public class Controller {
     }
 
     public void readDataFrom(String fname) throws FileNotFoundException {
-        File file = new File(fname);
+        readDataFrom(new File(fname));
+    }
 
+    public void readDataFrom(File file) throws FileNotFoundException {
         BufferedReader data = new BufferedReader(new FileReader(file));
 
         HashMap<String, ArrayList<?>> dataMap = new HashMap<>();
@@ -30,7 +32,7 @@ public class Controller {
                 dataMap.put(rawLine.getFirst(), new ArrayList<>(rawLine.subList(1, rawLine.size())));
             }
         } catch (IOException e) {
-            System.out.println("Reading failed in ReadDataFrom: " + e.getMessage());
+            GUI.error(e);
         }
 
         Arrays.stream(model.getClass().getDeclaredFields())
@@ -47,13 +49,19 @@ public class Controller {
                                     val[i] = Double.parseDouble((String) dataMap.get(field.getName()).get(i));
                                 }
 
+                                if (dataMap.get(field.getName()).size() < dataMap.get("LATA").size() - 1){
+                                    for (int i = dataMap.get(field.getName()).size(); i < val.length; i++) {
+                                        val[i] = val[dataMap.get(field.getName()).size()-1];
+                                    }
+                                }
+
                                 field.set(model, val);
                             }
                         } else {
                             field.set(model, dataMap.get("LATA").size() - 1);
                         }
                     } catch (IllegalAccessException e) {
-                        System.out.println("Access error while reading data: " + e.getMessage());
+                        GUI.error(e);
                     }
                 });
     }
@@ -64,7 +72,7 @@ public class Controller {
                     try {
                         method.invoke(model);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        System.out.println("Error while running model: " + e.getMessage() + " " + e.getClass().getName());
+                        GUI.error(e);
                     }
                 });
     }
@@ -79,7 +87,7 @@ public class Controller {
                 code.append(data.readLine());
             }
         } catch (IOException e) {
-            System.out.println("Script reading failed " + e.getMessage());
+            GUI.error(e);
             return null;
         }
 
@@ -89,7 +97,7 @@ public class Controller {
         try {
             return groovy.eval(code.toString());
         } catch (ScriptException e) {
-            System.out.println("Script evaluation failed: " + e.getMessage());
+            GUI.error(e);
             return null;
         }
     }
@@ -101,24 +109,30 @@ public class Controller {
         try {
             return groovy.eval(script);
         } catch (ScriptException e) {
-            System.out.println("Script evaluation failed: " + e.getMessage());
+            GUI.error(e);
             return null;
         }
     }
 
-    String getResultsAsTsv() { //TODO proper formatting
+    String getResultsAsTsv() {
         StringBuilder returnStr = new StringBuilder();
         Arrays.stream(this.model.getClass().getDeclaredFields())
                 .forEach(f -> {
                     try {
                         f.setAccessible(true);
-                        if (f.get(this.model).getClass() == double[].class) {
-                            returnStr.append(f.getName()).append(' ').append(Arrays.toString((double[]) f.get(this.model))).append('\n');
-                        } else if (f.get(this.model).getClass() == Integer.class) {
-                            returnStr.append(f.getName()).append(' ').append(f.get(this.model)).append('\n');
+                        if (f.get(this.model) != null) {
+                            if (f.get(this.model).getClass() == double[].class) {
+                                returnStr.append(f.getName());
+                                for (double d : (double[]) f.get(this.model)) {
+                                    returnStr.append(' ').append(d);
+                                }
+                                returnStr.append('\n');
+                            } else if (f.get(this.model).getClass() == Integer.class) {
+                                returnStr.append(f.getName()).append(' ').append(f.get(this.model)).append('\n');
+                            }
                         }
                     } catch (IllegalAccessException e) {
-                        System.out.println("Access error while reading data: " + e.getMessage());
+                        GUI.error(e);
                     }
                 });
         return returnStr.toString();
