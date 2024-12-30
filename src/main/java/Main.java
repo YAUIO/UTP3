@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
 public class Main {
+    static final String title = "HDPR";
     public static void main(String[] args) {
         new GUI();
     }
