@@ -94,9 +94,13 @@ public class GUI extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
 
         runModelButton.addActionListener(e -> {
-            if (modelList.getSelectedValue() != null && dataList.getSelectedValue() != null) {
-                controllerInUse.runModel();
-                refreshData();
+            if (controllerInUse != null) {
+                if (modelList.getSelectedValue() != null && dataList.getSelectedValue() != null) {
+                    controllerInUse.runModel();
+                    refreshData();
+                }
+            } else {
+                noControllerErrorDiag();
             }
         });
 
@@ -106,72 +110,84 @@ public class GUI extends JFrame {
         Dimension dSize = new Dimension(400,400);
 
         runScriptFileButton.addActionListener(e -> {
-            JFileChooser jfc = new JFileChooser();
-            jfc.setSize(dSize);
-            jfc.setPreferredSize(dSize);
-            jfc.setDialogTitle(Main.title);
-            jfc.setVisible(true);
-            jfc.setMultiSelectionEnabled(false);
+            if (controllerInUse != null) {
+                JFileChooser jfc = new JFileChooser();
+                jfc.setSize(dSize);
+                jfc.setPreferredSize(dSize);
+                jfc.setDialogTitle(Main.title);
+                jfc.setVisible(true);
+                jfc.setMultiSelectionEnabled(false);
 
-            JDialog dialog = new JDialog();
-            dialog.setLocationRelativeTo(this);
-            dialog.setSize(dSize);
-            dialog.setPreferredSize(dSize);
+                JDialog dialog = new JDialog();
+                dialog.setLocationRelativeTo(this);
+                dialog.setSize(dSize);
+                dialog.setPreferredSize(dSize);
 
-            jfc.addActionListener(ef -> {
-                if (ef.getActionCommand().equals("ApproveSelection")) {
-                    try {
-                        dialog.dispose();
-                        if (controllerInUse != null) {
-                            Object result = controllerInUse.runScriptFromFile(jfc.getSelectedFile().getAbsolutePath());
-                            if (result != null) {
-                                JOptionPane.showMessageDialog(this, "Return value of script: " + result);
+                jfc.addActionListener(ef -> {
+                    if (ef.getActionCommand().equals("ApproveSelection")) {
+                        try {
+                            dialog.dispose();
+                            if (controllerInUse != null) {
+                                Object result = controllerInUse.runScriptFromFile(jfc.getSelectedFile().getAbsolutePath());
+                                if (result != null) {
+                                    JOptionPane.showMessageDialog(this, "Return value of script: " + result);
+                                }
                             }
+                            refreshData();
+                        } catch (FileNotFoundException ex) {
+                            error(ex);
                         }
-                        refreshData();
-                    } catch (FileNotFoundException ex) {
-                        error(ex);
                     }
-                }
-            });
+                });
 
 
-            dialog.setLocationRelativeTo(this);
-            jfc.showOpenDialog(dialog);
+                dialog.setLocationRelativeTo(this);
+                jfc.showOpenDialog(dialog);
+            } else {
+                noControllerErrorDiag();
+            }
         });
 
         createAdhocScriptButton.addActionListener(e -> {
-            JDialog jd = new JDialog(this);
-            jd.setTitle(Main.title);
-            jd.setLayout(new BorderLayout());
-            JTextArea editor = new JTextArea();
-            JPanel buttons = new JPanel();
-            buttons.setLayout(new FlowLayout(FlowLayout.CENTER));
-            JButton submit = new JButton("Run");
-            buttons.add(submit);
+            if (controllerInUse != null) {
+                JDialog jd = new JDialog(this);
+                jd.setTitle(Main.title);
+                jd.setLayout(new BorderLayout());
+                JTextArea editor = new JTextArea();
+                JPanel buttons = new JPanel();
+                buttons.setLayout(new FlowLayout(FlowLayout.CENTER));
+                JButton submit = new JButton("Run");
+                buttons.add(submit);
 
-            jd.add(editor,BorderLayout.CENTER);
-            jd.add(buttons,BorderLayout.SOUTH);
+                jd.add(editor, BorderLayout.CENTER);
+                jd.add(buttons, BorderLayout.SOUTH);
 
-            jd.setSize(dSize);
-            jd.setPreferredSize(dSize);
-            jd.setLocationRelativeTo(this);
-            jd.pack();
-            jd.setVisible(true);
+                jd.setSize(dSize);
+                jd.setPreferredSize(dSize);
+                jd.setLocationRelativeTo(this);
+                jd.pack();
+                jd.setVisible(true);
 
-            submit.addActionListener(ex -> {
-                jd.dispose();
-                if (editor.getText() != null && controllerInUse != null) {
-                    Object result = controllerInUse.runScript(editor.getText());
-                    if (result != null) {
-                        JOptionPane.showMessageDialog(this, "Return value of script: " + result);
+                submit.addActionListener(ex -> {
+                    jd.dispose();
+                    if (editor.getText() != null && controllerInUse != null) {
+                        Object result = controllerInUse.runScript(editor.getText());
+                        if (result != null) {
+                            JOptionPane.showMessageDialog(this, "Return value of script: " + result);
+                        }
+                        refreshData();
                     }
-                    refreshData();
-                }
-            });
+                });
+            } else {
+                noControllerErrorDiag();
+            }
         });
 
         setVisible(true);
+    }
+
+    private void noControllerErrorDiag() {
+        JOptionPane.showMessageDialog(this, "No model and data in use", "NoControllerException", JOptionPane.ERROR_MESSAGE);
     }
 
     private void setData(String dname, String mname) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, FileNotFoundException {
