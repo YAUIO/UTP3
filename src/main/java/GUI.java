@@ -74,7 +74,7 @@ public class GUI extends JFrame {
 
         add(leftPanel, BorderLayout.WEST);
 
-        String[] columnNames = {"", "2015", "2016", "2017", "2018", "2019"}; //TODO
+        String[] columnNames = null;
         Object[][] dataA = null;
         DefaultTableModel model = new DefaultTableModel(dataA, columnNames);
         table = new JTable(model);
@@ -190,7 +190,16 @@ public class GUI extends JFrame {
             i++;
         }
 
-        String[] columnNames = {"", "2015", "2016", "2017", "2018", "2019"}; //TODO
+        String[] columnNames = null;
+
+        if (controllerInUse != null && controllerInUse.auxFields.get("LATA") != null) {
+            columnNames = new String[controllerInUse.auxFields.get("LATA").length];
+
+            for (int c = 0; c < columnNames.length; c++) {
+                String val = String.valueOf(controllerInUse.auxFields.get("LATA")[c]);
+                columnNames[c] = val.substring(0,val.indexOf('.'));
+            }
+        }
 
         DefaultTableModel model = new DefaultTableModel(dt, columnNames);
 

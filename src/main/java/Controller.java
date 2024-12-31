@@ -63,6 +63,13 @@ public class Controller {
                                 field.set(model, val);
                             }
                         } else {
+                            double[] val = new double[dataMap.get("LATA").size()];
+
+                            for (int i = 0; i < val.length; i++) {
+                                val[i] = Double.parseDouble((String) dataMap.get("LATA").get(i));
+                            }
+
+                            auxFields.put("LATA",val);
                             field.set(model, dataMap.get("LATA").size());
                         }
                     } catch (IllegalAccessException e) {
