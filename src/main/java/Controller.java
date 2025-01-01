@@ -1,5 +1,4 @@
 import models.Bind;
-import models.Model1;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -8,7 +7,6 @@ import javax.script.ScriptException;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.security.cert.CertificateRevokedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -113,8 +111,8 @@ public class Controller {
 
         HashMap<String, Field> fields = new HashMap<>();
 
-
         Arrays.stream(model.getClass().getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(Bind.class))
                 .forEach(field -> {
                     fields.put(field.getName(), field);
                     try {
@@ -160,6 +158,7 @@ public class Controller {
     String getResultsAsTsv() {
         StringBuilder returnStr = new StringBuilder();
         Arrays.stream(this.model.getClass().getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(Bind.class))
                 .forEach(f -> {
                     try {
                         f.setAccessible(true);

@@ -1,12 +1,9 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 public class GUI extends JFrame {
     private JTable table;
@@ -16,8 +13,6 @@ public class GUI extends JFrame {
     private Controller controllerInUse;
 
     public GUI() {
-        final GUI _this = this;
-
         Dimension size = new Dimension(1280, 720);
         setSize(size);
         setPreferredSize(size);
@@ -36,6 +31,14 @@ public class GUI extends JFrame {
         File fdata = new File("data/");
 
         File[] models = fmodel.listFiles(e -> e.getName().contains("Model"));
+
+        if (models == null) {
+            error(new RuntimeException("No models found in " + fmodel.getAbsolutePath()));
+            dataList = null;
+            modelList = null;
+
+            return;
+        }
 
         String[] ml = new String[models.length];
 
@@ -74,10 +77,7 @@ public class GUI extends JFrame {
 
         add(leftPanel, BorderLayout.WEST);
 
-        String[] columnNames = null;
-        Object[][] dataA = null;
-        DefaultTableModel model = new DefaultTableModel(dataA, columnNames);
-        table = new JTable(model);
+        table = new JTable(null);
         tableScrollPane = new JScrollPane(table);
 
         add(tableScrollPane, BorderLayout.CENTER);
@@ -93,7 +93,7 @@ public class GUI extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        runModelButton.addActionListener(e -> {
+        runModelButton.addActionListener(_ -> {
             if (controllerInUse != null) {
                 if (modelList.getSelectedValue() != null && dataList.getSelectedValue() != null) {
                     controllerInUse.runModel();
@@ -104,12 +104,12 @@ public class GUI extends JFrame {
             }
         });
 
-        modelList.addListSelectionListener(e -> listActionListener());
-        dataList.addListSelectionListener(e -> listActionListener());
+        modelList.addListSelectionListener(_ -> listActionListener());
+        dataList.addListSelectionListener(_ -> listActionListener());
 
         Dimension dSize = new Dimension(400,400);
 
-        runScriptFileButton.addActionListener(e -> {
+        runScriptFileButton.addActionListener(_ -> {
             if (controllerInUse != null) {
                 JFileChooser jfc = new JFileChooser();
                 jfc.setSize(dSize);
@@ -148,7 +148,7 @@ public class GUI extends JFrame {
             }
         });
 
-        createAdhocScriptButton.addActionListener(e -> {
+        createAdhocScriptButton.addActionListener(_ -> {
             if (controllerInUse != null) {
                 JDialog jd = new JDialog(this);
                 jd.setTitle(Main.title);
@@ -168,7 +168,7 @@ public class GUI extends JFrame {
                 jd.pack();
                 jd.setVisible(true);
 
-                submit.addActionListener(ex -> {
+                submit.addActionListener(_ -> {
                     jd.dispose();
                     if (editor.getText() != null && controllerInUse != null) {
                         Object result = controllerInUse.runScript(editor.getText());
