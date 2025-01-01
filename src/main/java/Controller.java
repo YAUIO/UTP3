@@ -70,6 +70,7 @@ public class Controller {
                             }
 
                             auxFields.put("LATA",val);
+
                             field.set(model, dataMap.get("LATA").size());
                         }
                     } catch (IllegalAccessException e) {
@@ -176,8 +177,6 @@ public class Controller {
                                     }
                                 }
                                 returnStr.append('\n');
-                            } else if (f.get(this.model).getClass() == Integer.class) {
-                                returnStr.append(f.getName()).append(' ').append(f.get(this.model)).append('\n');
                             }
                         }
                     } catch (IllegalAccessException e) {
