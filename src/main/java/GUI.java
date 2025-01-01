@@ -36,7 +36,6 @@ public class GUI extends JFrame {
             error(new RuntimeException("No models found in " + fmodel.getAbsolutePath()));
             dataList = null;
             modelList = null;
-
             return;
         }
 

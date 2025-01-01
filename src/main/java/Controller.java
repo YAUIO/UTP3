@@ -38,43 +38,47 @@ public class Controller {
             GUI.error(e);
         }
 
-        Arrays.stream(model.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Bind.class))
-                .forEach(field -> {
-                    field.setAccessible(true);
-                    try {
-                        if (!field.getName().equals("LL")) {
-                            if (dataMap.get(field.getName()) != null) {
+        if (dataMap.get("LATA") != null) {
+            Arrays.stream(model.getClass().getDeclaredFields())
+                    .filter(field -> field.isAnnotationPresent(Bind.class))
+                    .forEach(field -> {
+                        field.setAccessible(true);
+                        try {
+                            if (!field.getName().equals("LL")) {
+                                if (dataMap.get(field.getName()) != null) {
 
+                                    double[] val = new double[dataMap.get("LATA").size()];
+
+                                    for (int i = 0; i < dataMap.get(field.getName()).size(); i++) {
+                                        val[i] = Double.parseDouble((String) dataMap.get(field.getName()).get(i));
+                                    }
+
+                                    if (dataMap.get(field.getName()).size() < dataMap.get("LATA").size()) {
+                                        for (int i = dataMap.get(field.getName()).size() - 1; i < val.length; i++) {
+                                            val[i] = val[dataMap.get(field.getName()).size() - 1];
+                                        }
+                                    }
+
+                                    field.set(model, val);
+                                }
+                            } else {
                                 double[] val = new double[dataMap.get("LATA").size()];
 
-                                for (int i = 0; i < dataMap.get(field.getName()).size(); i++) {
-                                    val[i] = Double.parseDouble((String) dataMap.get(field.getName()).get(i));
+                                for (int i = 0; i < val.length; i++) {
+                                    val[i] = Double.parseDouble((String) dataMap.get("LATA").get(i));
                                 }
 
-                                if (dataMap.get(field.getName()).size() < dataMap.get("LATA").size()) {
-                                    for (int i = dataMap.get(field.getName()).size() - 1; i < val.length; i++) {
-                                        val[i] = val[dataMap.get(field.getName()).size() - 1];
-                                    }
-                                }
+                                auxFields.put("LATA", val);
 
-                                field.set(model, val);
+                                field.set(model, dataMap.get("LATA").size());
                             }
-                        } else {
-                            double[] val = new double[dataMap.get("LATA").size()];
-
-                            for (int i = 0; i < val.length; i++) {
-                                val[i] = Double.parseDouble((String) dataMap.get("LATA").get(i));
-                            }
-
-                            auxFields.put("LATA",val);
-
-                            field.set(model, dataMap.get("LATA").size());
+                        } catch (IllegalAccessException e) {
+                            GUI.error(e);
                         }
-                    } catch (IllegalAccessException e) {
-                        GUI.error(e);
-                    }
-                });
+                    });
+        } else {
+            GUI.error(new RuntimeException("Incorrect data format. LATA field is missing."));
+        }
     }
 
     public void runModel() {
