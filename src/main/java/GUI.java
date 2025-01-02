@@ -27,8 +27,8 @@ public class GUI extends JFrame {
 
         Dimension minL = new Dimension(120, 680);
 
-        File fmodel = new File("src/main/java/models/");
-        File fdata = new File("data/");
+        File fmodel = Main.modelDir;
+        File fdata = Main.dataDir;
 
         File[] models = fmodel.listFiles(e -> e.getName().contains("Model"));
 
@@ -110,7 +110,7 @@ public class GUI extends JFrame {
 
         runScriptFileButton.addActionListener(_ -> {
             if (controllerInUse != null) {
-                JFileChooser jfc = new JFileChooser();
+                JFileChooser jfc = new JFileChooser(System.getProperty("user.dir"));
                 jfc.setSize(dSize);
                 jfc.setPreferredSize(dSize);
                 jfc.setDialogTitle(Main.title);

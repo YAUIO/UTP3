@@ -151,7 +151,9 @@ public class Controller {
                         GUI.error(e);
                     }
                 } else {
-                    auxFields.put(name, (double[]) groovy.get(name));
+                    if (name.length() != 1 && !name.toLowerCase().equals(name) && groovy.get(name).getClass().equals(double[].class)) {
+                        auxFields.put(name, (double[]) groovy.get(name));
+                    }
                 }
             }
         }
