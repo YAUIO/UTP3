@@ -190,7 +190,7 @@ public class GUI extends JFrame {
     }
 
     private void setData(String dname, String mname) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, FileNotFoundException {
-        File fdata = new File("data/" + dname);
+        File fdata = new File(Main.dataDir.getAbsolutePath() + "/" + dname);
         controllerInUse = new Controller(mname);
         controllerInUse.readDataFrom(fdata);
     }

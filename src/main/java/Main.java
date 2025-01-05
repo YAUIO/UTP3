@@ -3,15 +3,15 @@ import java.io.File;
 
 public class Main {
     static final String title = "UTP3s30174";
-    static File modelDir;
+    static File modelDir = new File("src/main/java/models/");
     static File dataDir;
 
-    private static File getDirectory(String dirName) {
+    private static File getDirectory() {
         String userDir = System.getProperty("user.dir");
 
         JFileChooser jfc = new JFileChooser(userDir);
         JDialog jd = new JDialog();
-        String fcTitle = "Choose " + dirName + " directory";
+        String fcTitle = "Choose data directory";
         jfc.setDialogTitle(fcTitle);
         jd.setTitle(fcTitle);
 
@@ -29,13 +29,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        modelDir = getDirectory("models");
-        dataDir = getDirectory("data");
+        dataDir = getDirectory();
 
-        if (modelDir != null && dataDir != null && modelDir.exists() && dataDir.exists()) {
-            new GUI();
-        } else {
-            GUI.error(new RuntimeException("Data and Model directories don't exist"));
+        if (dataDir == null || !dataDir.exists()) {
+            dataDir = new File("data/");
+            GUI.error(new RuntimeException("Data directory doesn't exist, using default..."));
         }
+
+        new GUI();
     }
 }
