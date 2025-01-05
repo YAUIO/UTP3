@@ -6,7 +6,7 @@ public class Main {
     static File modelDir = new File("src/main/java/models/");
     static File dataDir;
 
-    private static File getDirectory() {
+    public static void getDataDirectory() {
         String userDir = System.getProperty("user.dir");
 
         JFileChooser jfc = new JFileChooser(userDir);
@@ -17,19 +17,15 @@ public class Main {
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        File chosenDir = null;
-
         if (jfc.showOpenDialog(jd) == JFileChooser.APPROVE_OPTION) {
-            chosenDir = new File(jfc.getSelectedFile().getAbsolutePath());
+            dataDir = new File(jfc.getSelectedFile().getAbsolutePath());
         }
 
         jd.dispose();
-
-        return chosenDir;
     }
 
     public static void main(String[] args) {
-        dataDir = getDirectory();
+        getDataDirectory();
 
         if (dataDir == null || !dataDir.exists()) {
             dataDir = new File("data/");

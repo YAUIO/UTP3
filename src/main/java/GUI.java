@@ -13,6 +13,8 @@ public class GUI extends JFrame {
     private Controller controllerInUse;
 
     public GUI() {
+        GUI _this = this;
+
         Dimension size = new Dimension(1280, 720);
         setSize(size);
         setPreferredSize(size);
@@ -86,7 +88,9 @@ public class GUI extends JFrame {
 
         JButton runScriptFileButton = new JButton("Run script from file");
         JButton createAdhocScriptButton = new JButton("Create and run ad hoc script");
+        JButton changeDataFolderButton = new JButton("Change data folder");
 
+        bottomPanel.add(changeDataFolderButton);
         bottomPanel.add(runScriptFileButton);
         bottomPanel.add(createAdhocScriptButton);
 
@@ -107,6 +111,12 @@ public class GUI extends JFrame {
         dataList.addListSelectionListener(_ -> listActionListener());
 
         Dimension dSize = new Dimension(400,400);
+
+        changeDataFolderButton.addActionListener(_ -> {
+            Main.getDataDirectory();
+            _this.dispose();
+            new GUI();
+        });
 
         runScriptFileButton.addActionListener(_ -> {
             if (controllerInUse != null) {
@@ -198,20 +208,24 @@ public class GUI extends JFrame {
     private void refreshData() {
         String[] tsv = controllerInUse.getResultsAsTsv().split("\n");
 
-        Object[][] dt = new Object[tsv.length][tsv[0].split(" ").length];
+        Object[][] dt = new Object[tsv.length - 1][tsv[0].split(" ").length + 1];
         int i = 0;
         for (String line : tsv) {
-            dt[i] = line.split(" ");
-            i++;
+            if (!line.startsWith("LATA")) {
+                dt[i] = line.split(" ");
+                i++;
+            }
         }
 
         String[] columnNames = null;
 
         if (controllerInUse != null && controllerInUse.auxFields.get("LATA") != null) {
-            columnNames = new String[controllerInUse.auxFields.get("LATA").length];
+            columnNames = new String[controllerInUse.auxFields.get("LATA").length + 1];
 
-            for (int c = 0; c < columnNames.length; c++) {
-                String val = String.valueOf(controllerInUse.auxFields.get("LATA")[c]);
+            columnNames[0] = "Name";
+
+            for (int c = 1; c < columnNames.length; c++) {
+                String val = String.valueOf(controllerInUse.auxFields.get("LATA")[c - 1]);
                 columnNames[c] = val.substring(0,val.indexOf('.'));
             }
         }
