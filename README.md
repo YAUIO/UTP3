@@ -1,3 +1,3 @@
-UTP3 project for PJATK, ty mr.********* for not accepting it tho
+UTP3 project for PJATK
 
 Project utilizes such things as: Reflection, ScriptEngine (used groovy here), Streams, Swing
